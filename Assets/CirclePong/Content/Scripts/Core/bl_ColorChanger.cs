@@ -13,7 +13,7 @@ public class bl_ColorChanger : MonoBehaviour
     [Header("References")]
     [SerializeField]private Text ScoreText;
     [SerializeField]private Image Background;
-        [SerializeField]private AudioClip ChangeColorSound;
+    [SerializeField]private AudioClip ChangeColorSound;
 
     private int Count;
     private int CurrentColorID;
