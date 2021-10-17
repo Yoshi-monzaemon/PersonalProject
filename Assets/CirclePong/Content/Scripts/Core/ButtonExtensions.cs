@@ -15,36 +15,32 @@ namespace PersonalProjectExtension
                 .AsUnitObservable();
         }
 
-        public static IObservable<ButtonTapType> OnClickAndHoldAsObservable(this Button button, double ms = 1000, int switchNum = 5, bool isPlaySE = true)
+        public static IObservable<ButtonTapType> OnClickAndHoldAsObservable(this Button button, double ms = 100, int switchNum = 5, bool isPlaySE = true)
         {
-            const float DEFAULT_HOLD_SPAN = 200;
-            var holdTimer = Observable.Timer(TimeSpan.FromMilliseconds(ms)).AsUnitObservable();
-            var longHoldTimer = Observable.Timer(TimeSpan.FromMilliseconds(ms + DEFAULT_HOLD_SPAN * switchNum)).AsUnitObservable();
+            var switchHoldTimer = Observable.Timer(TimeSpan.FromMilliseconds(ms * switchNum)).AsUnitObservable();
+            var switchLongHoldTimer = Observable.Timer(TimeSpan.FromMilliseconds(ms * (switchNum*3 + 1))).AsUnitObservable();
 
             var onClickAsObservable = button.OnPointerUpAsObservable()
+                .First()
                 .Do(_ => Debug.Log("///onClick"))
-                .TakeUntil(holdTimer)
-                .Select(_ => ButtonTapType.onClick)
-                .First();
+                .TakeUntil(switchHoldTimer)
+                .Select(_ => ButtonTapType.onClick);
 
-            var onHoldAsObservable = Observable.Interval(TimeSpan.FromMilliseconds(100))
-                .SkipUntil(holdTimer)
+            var onHoldAsObservable = Observable.Interval(TimeSpan.FromMilliseconds(ms))
+                .SkipUntil(switchHoldTimer)
                 .Do(_ => Debug.Log("///onHold"))
+                .Select(_ => ButtonTapType.onHold)
                 .TakeUntil(button.OnPointerUpAsObservable())
-                .TakeUntil(longHoldTimer)
-                .Select(_ => ButtonTapType.onHold);
+                .TakeUntil(switchLongHoldTimer);
 
-            var onLongHoldAsObservable = Observable.Interval(TimeSpan.FromMilliseconds(100))
-                .SkipUntil(longHoldTimer)
+            var onLongHoldAsObservable = Observable.Interval(TimeSpan.FromMilliseconds(ms))
+                .SkipUntil(switchLongHoldTimer)
                 .Do(_ => Debug.Log("///longHold"))
                 .TakeUntil(button.OnPointerUpAsObservable())
                 .Select(_ => ButtonTapType.onLongHold);
 
             return button.OnPointerDownAsObservable()
-                .SelectMany(_ =>{
-                    Debug.Log("///PointerDown");
-                    return Observable.Merge(onClickAsObservable, onHoldAsObservable, onLongHoldAsObservable);
-                });
+                .SelectMany(_ =>Observable.Merge(onClickAsObservable, onHoldAsObservable, onLongHoldAsObservable));
         }
     }
 
