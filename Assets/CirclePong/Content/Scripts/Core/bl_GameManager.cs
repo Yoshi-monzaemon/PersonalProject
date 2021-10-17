@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UniRx;
+using PersonalProjectExtension;
 
 public class bl_GameManager : MonoBehaviour
 {
@@ -24,7 +26,9 @@ public class bl_GameManager : MonoBehaviour
     [SerializeField]private Animator GameOverAnim;
     [SerializeField]private Animator MenuAnim;
     [SerializeField]private AudioClip GameOverSound;
-
+    [SerializeField] private Button StartButton;
+    [SerializeField] private Button RetryButton;
+    [SerializeField] private Button RightButton;
 
     private int CurrentScore;
     public static bool GameStarted = false;
@@ -63,6 +67,17 @@ public class bl_GameManager : MonoBehaviour
         defaultBallSpeed = BallSpeed;
         AudioListener.volume = (audioEnable) ? 1 : 0;
         AudioImage.sprite = (audioEnable) ? AudioEnableIcon : AudioDisableIcon;
+        
+        StartButton.OnClickAsObservable()
+            .Do(_ => StartGame())
+            .Subscribe();
+
+        RetryButton.OnClickAsObservable()
+            .Do(_ => TryAgain())
+            .Subscribe();
+
+        RightButton.OnClickAndHoldAsObservable()
+            .Subscribe();
     }
 
     /// <summary>
