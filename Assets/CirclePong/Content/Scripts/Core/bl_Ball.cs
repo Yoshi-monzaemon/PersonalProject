@@ -81,6 +81,11 @@ public class bl_Ball : MonoBehaviour
         {
             OnBounce(other.transform);
         }
+        else if (other.tag == "Enemy")
+        {
+            Debug.Log("///touch");
+            OnBounce(other.transform);
+        }
     }
 
     /// <summary>
