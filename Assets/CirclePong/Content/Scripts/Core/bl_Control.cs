@@ -51,10 +51,10 @@ public class bl_Control : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="left"></param>
-    public void SetButton(bool left)
+    /// <param name="isLeft"></param>
+    public void SetButton(bool isLeft)
     {
-        horizontal = (left) ? -1 : 1;
+        horizontal = (isLeft) ? -1 : 1;
     }
 
     /// <summary>

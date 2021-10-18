@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using UniRx;
+using UniRx.Triggers;
 using PersonalProjectExtension;
 
 public class bl_GameManager : MonoBehaviour
@@ -26,9 +27,11 @@ public class bl_GameManager : MonoBehaviour
     [SerializeField]private Animator GameOverAnim;
     [SerializeField]private Animator MenuAnim;
     [SerializeField]private AudioClip GameOverSound;
-    [SerializeField] private Button StartButton;
-    [SerializeField] private Button RetryButton;
-    [SerializeField] private Button RightButton;
+    [SerializeField]private Button StartButton;
+    [SerializeField]private Button RetryButton;
+    [SerializeField]private Button RightButton;
+    [SerializeField]private Button LeftButton;
+    [SerializeField]private bl_Control platForm;
 
     private int CurrentScore;
     public static bool GameStarted = false;
@@ -76,7 +79,20 @@ public class bl_GameManager : MonoBehaviour
             .Do(_ => TryAgain())
             .Subscribe();
 
-        RightButton.OnClickAndHoldAsObservable()
+        RightButton.OnPointerDownAsObservable()
+            .Do(_ => platForm.SetButton(false))
+            .Subscribe();
+
+        RightButton.OnPointerUpAsObservable()
+            .Do(_ => platForm.SetButtonUp())
+            .Subscribe();
+
+        LeftButton.OnPointerDownAsObservable()
+            .Do(_ => platForm.SetButton(true))
+            .Subscribe();
+
+        LeftButton.OnPointerUpAsObservable()
+            .Do(_ => platForm.SetButtonUp())
             .Subscribe();
     }
 
