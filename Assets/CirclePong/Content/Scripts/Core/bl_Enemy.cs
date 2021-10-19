@@ -48,7 +48,6 @@ public class bl_Enemy : MonoBehaviour
     public void ResetPosition()
     {
         resetDefaultPosition();
-        //m_Transform.position = defaultPosition;
         m_RectTransform.localPosition = defaultPosition;
         velocity = Vector2.zero;
     }
@@ -98,7 +97,7 @@ public class bl_Enemy : MonoBehaviour
         float variant = Random.Range(VariantRange.x, VariantRange.y);
         Vector3 v = new Vector3(0f, variant, 0f);
         Vector2 vector = m_Transform.position - v;
-        velocity = -vector.normalized + ((Vector2.Reflect(transform.position - v.normalized, platform.up).normalized * GameManager.BallSpeed / 2));
+        velocity = -vector.normalized + ((Vector2.Reflect(transform.position - v.normalized, platform.up).normalized * GameManager.BallSpeed * 0.7f));
         velocity += (new Vector2(variant, variant));
         //GameManager.OnBounce();
         Source.clip = BounceSound;
