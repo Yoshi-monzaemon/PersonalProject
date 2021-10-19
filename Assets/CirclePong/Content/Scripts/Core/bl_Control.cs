@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class bl_Control : MonoBehaviour
 {
+    [SerializeField] private Image line;
  
     private Transform m_Transform;
     private float horizontal;
@@ -71,5 +73,10 @@ public class bl_Control : MonoBehaviour
     void RotatePlatform()
     {
         m_Transform.Rotate(new Vector3(0, 0, -horizontal) * Time.deltaTime * GameManager.PlatformSpeed, Space.Self);
+    }
+
+    public void AdjustImageSize(float circleRate = 0.1f)
+    {
+        line.fillAmount = circleRate;
     }
 }

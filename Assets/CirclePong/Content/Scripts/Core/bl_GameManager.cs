@@ -37,6 +37,7 @@ public class bl_GameManager : MonoBehaviour
     public static bool GameStarted = false;
     private bl_Ball m_Ball;
     private bl_Control m_Platform;
+    private bl_Enemy m_Enemy;
     private bl_ColorChanger ColorChanger;
     private int GamesPlayed = 0;
     private int BestScore = 0;
@@ -56,6 +57,7 @@ public class bl_GameManager : MonoBehaviour
     {
         m_Ball = FindObjectOfType<bl_Ball>();
         m_Platform = FindObjectOfType<bl_Control>();
+        m_Enemy = FindObjectOfType<bl_Enemy>();
         ColorChanger = FindObjectOfType<bl_ColorChanger>();
         Ad = FindObjectOfType<bl_Ad>();
         Source = GetComponent<AudioSource>();
@@ -80,20 +82,16 @@ public class bl_GameManager : MonoBehaviour
             .Subscribe();
 
         RightButton.OnPointerDownAsObservable()
-            .Do(_ => platForm.SetButton(false))
-            .Subscribe();
+            .Subscribe(_ => platForm.SetButton(false));
 
         RightButton.OnPointerUpAsObservable()
-            .Do(_ => platForm.SetButtonUp())
-            .Subscribe();
+            .Subscribe(_ => platForm.SetButtonUp());
 
         LeftButton.OnPointerDownAsObservable()
-            .Do(_ => platForm.SetButton(true))
-            .Subscribe();
+            .Subscribe(_ => platForm.SetButton(true));
 
         LeftButton.OnPointerUpAsObservable()
-            .Do(_ => platForm.SetButtonUp())
-            .Subscribe();
+            .Subscribe(_ => platForm.SetButtonUp());
     }
 
     /// <summary>
@@ -129,7 +127,26 @@ public class bl_GameManager : MonoBehaviour
         GameStarted = false;
         BounceCount = 0;
         BallSpeed = defaultBallSpeed;
-        GameOverScoreText.text = CurrentScore.ToString();
+        GameOverScoreText.text = "FAILURE";
+        BestScoreText.gameObject.SetActive(false);
+        GameOverAnim.gameObject.SetActive(true);
+        ColorChanger.OnGameOver();
+        if (GameOverSound)
+        {
+            Source.clip = GameOverSound;
+            Source.Play();
+        }
+    }
+
+    public void OnGameClear()
+    {
+        if (!GameStarted)
+            return;
+
+        GameStarted = false;
+        BounceCount = 0;
+        BallSpeed = defaultBallSpeed;
+        BestScoreText.gameObject.SetActive(false);
         BestScoreText.text = string.Format("BEST SCORE: {0}", BestScore);
         GameOverAnim.gameObject.SetActive(true);
         ColorChanger.OnGameOver();
@@ -225,6 +242,7 @@ public class bl_GameManager : MonoBehaviour
     {
         m_Ball.ResetPosition();
         m_Platform.ResetRotation();
+        m_Enemy.ResetPosition();
         GameOverAnim.SetTrigger("hide");
         yield return new WaitForSeconds(GameOverAnim.GetCurrentAnimatorStateInfo(0).length);
         GameOverAnim.gameObject.SetActive(false);

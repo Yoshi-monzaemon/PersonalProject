@@ -83,22 +83,21 @@ public class bl_Ball : MonoBehaviour
         }
         else if (other.tag == "Enemy")
         {
-            Debug.Log("///touch");
-            OnBounce(other.transform);
+            OnBounce(other.transform, false);
         }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    void OnBounce(Transform platform)
+    void OnBounce(Transform platform, bool isPlayer = true)
     {
         float variant = Random.Range(VariantRange.x, VariantRange.y);
         Vector3 v = new Vector3(0f, variant, 0f);
         Vector2 vector = m_Transform.position - v;
         velocity = -vector.normalized + ((Vector2.Reflect(transform.position - v.normalized, platform.up).normalized * GameManager.BallSpeed));
         velocity += (new Vector2(variant, variant));
-        GameManager.OnBounce();
+        if(isPlayer) GameManager.OnBounce();
         Source.clip = BounceSound;
         if (BounceParticles)
         {
