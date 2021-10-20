@@ -59,7 +59,7 @@ public class bl_Enemy : MonoBehaviour
     {
         if (Vector2.Distance(m_Transform.parent.position, m_Transform.position) >= DeathRadius)
         {
-            GameManager.OnGameOver();
+            GameManager.OnGameClear();
         }
     }
 
@@ -97,9 +97,9 @@ public class bl_Enemy : MonoBehaviour
         float variant = Random.Range(VariantRange.x, VariantRange.y);
         Vector3 v = new Vector3(0f, variant, 0f);
         Vector2 vector = m_Transform.position - v;
-        velocity = -vector.normalized + ((Vector2.Reflect(transform.position - v.normalized, platform.up).normalized * GameManager.BallSpeed * 0.7f));
+        velocity = -vector.normalized + ((Vector2.Reflect(transform.position - v.normalized, platform.up).normalized * GameManager.EnemySpeed));
         velocity += (new Vector2(variant, variant));
-        //GameManager.OnBounce();
+        GameManager.OnBounce();
         Source.clip = BounceSound;
         if (BounceParticles)
         {
@@ -123,7 +123,7 @@ public class bl_Enemy : MonoBehaviour
 
     void resetDefaultPosition()
     {
-        var positionNum = Random.Range(1, enemyPositionList.Count + 1);
+        var positionNum = Random.Range(1, enemyPositionList.Count);
         var enemyPosition = enemyPositionList[positionNum];
         defaultPosition = enemyPositionList[positionNum];
     }

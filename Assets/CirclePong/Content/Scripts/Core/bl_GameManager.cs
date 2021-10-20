@@ -10,6 +10,7 @@ public class bl_GameManager : MonoBehaviour
     [Header("Settings")]
     [Range(25,500)]public float PlatformSpeed = 75;
     [Range(1,15)]public float BallSpeed = 3.3f;
+    [Range(1,15)]public float EnemySpeed = 1.0f;
     [SerializeField,Range(1,50)]private int IncreaseBallSpeedEach = 5;
     [SerializeField,Range(0.1f,20)]private float IncreaseBallSpeedPerHit = 2;
 
@@ -47,6 +48,7 @@ public class bl_GameManager : MonoBehaviour
     private AudioSource Source;
     private int BounceCount = 0;
     private float defaultBallSpeed;
+    private float defaultEnemySpeed;
     private bool audioEnable = true;
     private bl_Ad Ad;
 
@@ -70,6 +72,7 @@ public class bl_GameManager : MonoBehaviour
         BestScoreMenuText.text = string.Format("BEST SCORE: {0}", BestScore);
         GamePlayedText.text = string.Format("GAMES PLAYED: {0}", GamesPlayed);
         defaultBallSpeed = BallSpeed;
+        defaultEnemySpeed = EnemySpeed;
         AudioListener.volume = (audioEnable) ? 1 : 0;
         AudioImage.sprite = (audioEnable) ? AudioEnableIcon : AudioDisableIcon;
         
@@ -81,16 +84,16 @@ public class bl_GameManager : MonoBehaviour
             .Do(_ => TryAgain())
             .Subscribe();
 
-        RightButton.OnPointerDownAsObservable()
+        LeftButton.OnPointerDownAsObservable()
             .Subscribe(_ => platForm.SetButton(false));
 
-        RightButton.OnPointerUpAsObservable()
+        LeftButton.OnPointerUpAsObservable()
             .Subscribe(_ => platForm.SetButtonUp());
 
-        LeftButton.OnPointerDownAsObservable()
+        RightButton.OnPointerDownAsObservable()
             .Subscribe(_ => platForm.SetButton(true));
 
-        LeftButton.OnPointerUpAsObservable()
+        RightButton.OnPointerUpAsObservable()
             .Subscribe(_ => platForm.SetButtonUp());
     }
 
@@ -127,6 +130,7 @@ public class bl_GameManager : MonoBehaviour
         GameStarted = false;
         BounceCount = 0;
         BallSpeed = defaultBallSpeed;
+        EnemySpeed = defaultEnemySpeed;
         GameOverScoreText.text = "FAILURE";
         BestScoreText.gameObject.SetActive(false);
         GameOverAnim.gameObject.SetActive(true);
@@ -146,6 +150,8 @@ public class bl_GameManager : MonoBehaviour
         GameStarted = false;
         BounceCount = 0;
         BallSpeed = defaultBallSpeed;
+        EnemySpeed = defaultBallSpeed;
+        GameOverScoreText.text = CurrentScore.ToString();
         BestScoreText.gameObject.SetActive(false);
         BestScoreText.text = string.Format("BEST SCORE: {0}", BestScore);
         GameOverAnim.gameObject.SetActive(true);
@@ -176,7 +182,8 @@ public class bl_GameManager : MonoBehaviour
         //Increment the difficult of game
         if(BounceCount >= IncreaseBallSpeedEach)
         {
-            BallSpeed += IncreaseBallSpeedPerHit;
+            //BallSpeed += IncreaseBallSpeedPerHit;
+            EnemySpeed += IncreaseBallSpeedPerHit;
             BounceCount = 0;
         }
     }
